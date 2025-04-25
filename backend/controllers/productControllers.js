@@ -35,20 +35,18 @@ export const ViewProduct = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found" });
 
-        const productWithSignedUrl = async () => ({
-            ...product,
-            imageUrl: await getSignedImageUrl(product?.imageUrl),
-          })
-  
-         const productDetails = await productWithSignedUrl()
-      
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Product found successfully",
-        data: productDetails,
-      });
+    const productWithSignedUrl = async () => ({
+      ...product,
+      imageUrl: await getSignedImageUrl(product?.imageUrl),
+    });
+
+    const productDetails = await productWithSignedUrl();
+
+    return res.status(200).json({
+      success: true,
+      message: "Product found successfully",
+      data: productDetails,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -79,3 +77,37 @@ export const GetAllProducts = async (req, res) => {
 };
 
 export const deleteProduct = async () => {};
+
+export const getPageResults = async (req, res) => {
+  try {
+    const { page } = req.query;
+    if (!page)
+      return res
+        .status(401)
+        .json({ success: false, message: "Page number required" });
+
+    const [products, total] = await Promise.all([
+      productsModel
+        .find({})
+        .skip((page - 1) * 10)
+        .limit(10)
+        .lean(),
+      productsModel.countDocuments(),
+    ]);
+    if (!products)
+      return res
+        .status(401)
+        .json({ success: false, message: "No products found" });
+
+    const productsWithUrls = await Promise.all(
+      products.map(async (product) => ({
+        ...product,
+        imageUrl: await getSignedImageUrl(product.imageUrl),
+      }))
+    );
+
+    return res.status(200).json({ success: true, data: productsWithUrls, meta:{totalPages:Math.ceil(total / 10)} });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};

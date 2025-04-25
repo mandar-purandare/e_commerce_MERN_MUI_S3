@@ -6,6 +6,7 @@ import {
   CardContent,
   CardMedia,
   Grid2,
+  Pagination,
   Typography,
 } from "@mui/material";
 import NoProductsSvg from "../assets/empty-box.svg";
@@ -17,16 +18,39 @@ import { useNavigate } from "react-router-dom";
 
 function ProductGallery() {
   const [productsArray, setProductsArray] = useState<Product[]>([]);
-  const goTo = useNavigate()
+  const [metaInfo, setMetaInfo] = useState<any>({});
+  const goTo = useNavigate();
 
-  const getAllProducts = async () => {
+  // const getAllProducts = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "http://localhost:8080/api/v1/products/get-all-products"
+  //     );
+  //     if (response.data.success) {
+  //       console.log("success");
+  //       setProductsArray([...response.data.data]);
+  //     } else {
+  //       toast.error(response.data.error);
+  //     }
+  //   } catch (error) {
+  //     toast.error((error as any).response.data.message);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getAllProducts();
+  // }, []);
+
+  const getPageResults = async (pageNumber: number) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/v1/products/get-all-products"
+        "http://localhost:8080/api/v1/products/get-page-results",
+        { params: { page: pageNumber } }
       );
       if (response.data.success) {
-        console.log("success");
         setProductsArray([...response.data.data]);
+        const totalPages = response.data.meta.totalPages;
+        setMetaInfo({ totalPages });
       } else {
         toast.error(response.data.error);
       }
@@ -36,12 +60,14 @@ function ProductGallery() {
   };
 
   useEffect(() => {
-    getAllProducts();
+    getPageResults(1);
   }, []);
 
-  const viewProductDetials = (productId:string | undefined) => {
-    goTo(`/view-product/${productId}`)
-  }
+  const viewProductDetials = (productId: string | undefined) => {
+    goTo(`/view-product/${productId}`);
+  };
+
+  console.log("minfo", metaInfo);
 
   return (
     <>
@@ -70,57 +96,61 @@ function ProductGallery() {
           </Box>
         </>
       ) : (
-        <Box sx={{p:4}}>
-        <Grid2 container spacing={4}>
-        {productsArray.map((product) => {
-          return(
-            <Grid2>
-            <Card sx={{ width: 345, height:'500px' }} raised>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              height="250"
-              sx={{objectFit:'contain'}}
-              image={product?.imageUrl}
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                {product?.name}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                {product?.description}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small">Share</Button>
-              <Button size="small" onClick={() => viewProductDetials(product?._id)}>View Details</Button>
-            </CardActions>
-          </Card>
+        <Box sx={{ p: 4 }}>
+          <Grid2
+            container
+            spacing={5}
+            sx={{
+              width: "85%",
+              margin: "auto",
+              justifyContent: "center",
+            }}
+          >
+            {productsArray.map((product) => {
+              return (
+                <Grid2>
+                  <Card sx={{ width: 345, height: "425px" }} raised>
+                    <CardMedia
+                      component="img"
+                      alt="green iguana"
+                      height="250"
+                      sx={{ objectFit: "contain" }}
+                      image={product?.imageUrl}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {product?.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        {/* {product?.description} */}
+                        {product?.description.length <= 50
+                          ? product?.description
+                          : product?.description.substr(0, 18) + "..."}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button size="small">Share</Button>
+                      <Button
+                        size="small"
+                        onClick={() => viewProductDetials(product?._id)}
+                      >
+                        View Details
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid2>
+              );
+            })}
           </Grid2>
-          )
-        })}
-          {/* <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              height="140"
-              image="/static/images/cards/contemplative-reptile.jpg"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Lizard
-              </Typography>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                Lizards are a widespread group of squamate reptiles, with over
-                6,000 species, ranging across all continents except Antarctica
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small">Share</Button>
-              <Button size="small">Learn More</Button>
-            </CardActions>
-          </Card> */}
-        </Grid2>
+          <Pagination
+            count={metaInfo.totalPages}
+            color="primary"
+            sx={{  position:'absolute', bottom:50, right:'50%' }}
+            onChange={(_, page: number) => getPageResults(page)}
+          />
         </Box>
       )}
     </>
