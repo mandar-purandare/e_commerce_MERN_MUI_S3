@@ -9,8 +9,9 @@ const Product = new Schema({
     category: String,
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: usersModel
-    }
+        ref: 'User'
+    },
+    imageKitFileId : String
 },{timestamps:true})
 
 export default mongoose.model('Product', Product)

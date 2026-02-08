@@ -6,5 +6,6 @@ export type Product = {
     category: string,
     description: string,
     imageUrl?: string,
-    userId: string
+    userId: string,
+    imageKitFileId?: string
 }

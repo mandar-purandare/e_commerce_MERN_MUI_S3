@@ -8,14 +8,20 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Product } from "../types/main.types";
 import toast from "react-hot-toast";
+import { LoginContext } from "../contexts/AuthContext";
 
 function ViewProduct() {
   const [productDetails, setProductDetails] = useState<Product>();
   const productId = useParams().id;
+  const { state } = useContext(LoginContext);
+  const goTo = useNavigate();
+
+  const userId = state.user._id;
+  console.log(userId);
 
   useEffect(() => {
     const getProductDetails = async () => {
@@ -34,7 +40,33 @@ function ViewProduct() {
     getProductDetails();
   }, [productId]);
 
-  console.log(productDetails);
+  const addToCart = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/products/add-to-cart",
+        { productId, userId }
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
+  };
+
+  const deleteProduct = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/api/v1/products/delete-product/${productId}/${productDetails?.imageKitFileId}`
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+        goTo('/product-gallery')
+      }
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
+  };
 
   return (
     <Box
@@ -49,7 +81,7 @@ function ViewProduct() {
           height: "600px",
           display: "flex",
           flexDirection: "column",
-          padding:4
+          padding: 4,
         }}
         raised
       >
@@ -60,7 +92,14 @@ function ViewProduct() {
           sx={{ objectFit: "contain" }}
           image={productDetails?.imageUrl}
         />
-        <CardContent sx={{flexGrow:1, display:'flex', flexDirection:'column', rowGap:2}}>
+        <CardContent
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            rowGap: 2,
+          }}
+        >
           <Typography gutterBottom variant="h4" component="div">
             {productDetails?.name}
           </Typography>
@@ -71,12 +110,15 @@ function ViewProduct() {
             ₹{productDetails?.price}
           </Typography>
         </CardContent>
-        <CardActions sx={{ justifyContent: "center"}}>
+        <CardActions sx={{ justifyContent: "center" }}>
           <Button size="small" variant="contained">
             Buy
           </Button>
-          <Button size="small" variant="contained">
-            Add To Card
+          <Button size="small" variant="contained" onClick={addToCart}>
+            Add To Cart
+          </Button>
+          <Button size="small" variant="contained" onClick={deleteProduct}>
+            Delete
           </Button>
         </CardActions>
       </Card>
