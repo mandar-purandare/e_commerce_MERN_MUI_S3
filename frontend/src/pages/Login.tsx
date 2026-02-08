@@ -1,5 +1,5 @@
 import { Button, Grid2, Link, Paper, TextField, Typography } from "@mui/material";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import React, { FormEvent, useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { LoginContext } from "../contexts/AuthContext";
