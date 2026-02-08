@@ -66,8 +66,14 @@ function AddProduct() {
           data.append("imageUrl", formData.productImage); 
         }
   
+        // const response = await axios.post(
+        //   "http://localhost:8080/api/v1/products/add-product", 
+        //   data,          
+        //   { headers: { "Content-Type": "multipart/form-data" } }
+        // );
+
         const response = await axios.post(
-          "http://localhost:8080/api/v1/products/add-product", 
+          "https://e-commerce-mern-mui-s3.onrender.com/api/v1/products/add-product", 
           data,          
           { headers: { "Content-Type": "multipart/form-data" } }
         );

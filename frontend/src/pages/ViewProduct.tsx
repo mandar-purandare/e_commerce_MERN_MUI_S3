@@ -26,8 +26,12 @@ function ViewProduct() {
   useEffect(() => {
     const getProductDetails = async () => {
       try {
+        // const response = await axios.get(
+        //   "http://localhost:8080/api/v1/products/view-product",
+        //   { params: { id: productId } }
+        // );
         const response = await axios.get(
-          "http://localhost:8080/api/v1/products/view-product",
+          "https://e-commerce-mern-mui-s3.onrender.com/api/v1/products/view-product",
           { params: { id: productId } }
         );
         if (response.data.success) {
@@ -42,8 +46,12 @@ function ViewProduct() {
 
   const addToCart = async () => {
     try {
+      // const response = await axios.post(
+      //   "http://localhost:8080/api/v1/products/add-to-cart",
+      //   { productId, userId }
+      // );
       const response = await axios.post(
-        "http://localhost:8080/api/v1/products/add-to-cart",
+        "https://e-commerce-mern-mui-s3.onrender.com/api/v1/products/add-to-cart",
         { productId, userId }
       );
       if (response.data.success) {
@@ -56,8 +64,11 @@ function ViewProduct() {
 
   const deleteProduct = async () => {
     try {
+      // const response = await axios.delete(
+      //   `http://localhost:8080/api/v1/products/delete-product/${productId}/${productDetails?.imageKitFileId}`
+      // );
       const response = await axios.delete(
-        `http://localhost:8080/api/v1/products/delete-product/${productId}/${productDetails?.imageKitFileId}`
+        `https://e-commerce-mern-mui-s3.onrender.com/api/v1/products/delete-product/${productId}/${productDetails?.imageKitFileId}`
       );
       if (response.data.success) {
         toast.success(response.data.message);

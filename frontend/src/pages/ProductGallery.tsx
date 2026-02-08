@@ -43,8 +43,12 @@ function ProductGallery() {
 
   const getPageResults = async (pageNumber: number) => {
     try {
+      // const response = await axios.get(
+      //   "http://localhost:8080/api/v1/products/get-page-results",
+      //   { params: { page: pageNumber } }
+      // );
       const response = await axios.get(
-        "http://localhost:8080/api/v1/products/get-page-results",
+        "https://e-commerce-mern-mui-s3.onrender.com/api/v1/products/get-page-results",
         { params: { page: pageNumber } }
       );
       if (response.data.success) {

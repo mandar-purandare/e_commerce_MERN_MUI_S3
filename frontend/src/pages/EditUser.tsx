@@ -91,8 +91,12 @@ function EditUser() {
       userDetails.email !== "" &&
       userDetails.password !== ""
     ) {
+      // const userEdit: any = await axios.post(
+      //   "http://localhost:8080/api/v1/auth/edit-user",
+      //   userDetails
+      // );
       const userEdit: any = await axios.post(
-        "http://localhost:8080/api/v1/auth/edit-user",
+        "https://e-commerce-mern-mui-s3.onrender.com/api/v1/auth/edit-user",
         userDetails
       );
       if (userEdit.data.success) {

@@ -30,8 +30,12 @@ function Register() {
       registerDetails.email !== "" &&
       registerDetails.password !== ""
     ) {
+      // const userRegistration: any = await axios.post(
+      //   "http://localhost:8080/api/v1/auth/register",
+      //   registerDetails
+      // );
       const userRegistration: any = await axios.post(
-        "http://localhost:8080/api/v1/auth/register",
+        "https://e-commerce-mern-mui-s3.onrender.com/api/v1/auth/register",
         registerDetails
       );
       if (userRegistration.data.success) {

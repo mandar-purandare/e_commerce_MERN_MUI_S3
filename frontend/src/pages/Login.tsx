@@ -20,7 +20,8 @@ function Login() {
         if(loginDetails.email !== '' && loginDetails.password !== '')
         {
             try{
-              const userLogin:any = await axios.post('http://localhost:8080/api/v1/auth/login', loginDetails)
+              // const userLogin:any = await axios.post('http://localhost:8080/api/v1/auth/login', loginDetails)
+              const userLogin:any = await axios.post('https://e-commerce-mern-mui-s3.onrender.com/api/v1/auth/login', loginDetails)
             if(userLogin.data.success){
                 toast.success(userLogin.data.message)
                 setLoginDetails({email:'', password:''})
